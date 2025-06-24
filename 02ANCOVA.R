@@ -3,8 +3,8 @@
 
 library(dplyr)
 # Set reference levels for treatment variables as required for analysis
-complete_long$TRT01PN <- relevel(factor(complete_long$TRT01PN),ref=2)
-complete_long$TRT01P <- relevel(factor(complete_long$TRT01P),ref="PLACEBO")
+complete_long$TRT01PN <- as.character(complete_long$TRT01PN)
+complete_long$TRT01P <- as.character(complete_long$TRT01P)
 
 # Convert to 'mids' object for multiply imputed analysis
 complete_imp <- mice::as.mids(complete_long, .imp = "impno", .id = "id")
