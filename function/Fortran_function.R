@@ -377,28 +377,49 @@ ps2n <- function(p, psi, n, x, npatt, r, mdpst, nmdp, oc, mc, nmon, sj, nlayer, 
 }
 
 # complete I-step and P-step
-mda_r <- function (s, theta, steps = 1, showits = FALSE)  {
+mda_r <- function (s, theta, steps = 1, showits = FALSE, criterion = 1e-04)  {
   s$x <- .na.to.snglcode(s$x, as.double(999))
   tobs <- tobsmn(s$p, s$psi, s$n, s$x, s$npatt, s$r, s$mdpst,  
                  s$nmdp, s$last, integer(s$p), s$sj, s$layer, s$nlayer, s$d)
-  if (showits)  
+  if (showits)
     cat(paste("Steps of Monotone Data Augmentation:", "\n"))
-  for (i in 1:steps) {
-    if (showits)  
-      cat(paste(format(i), "...", sep = ""))
+  it <- 0
+  converged <- FALSE
+  while ((!converged) & (it < steps)) {
+    old <- theta
     # I-step: impute missing data given current parameters
-    s$x <- is2n(s$d, theta, s$p, s$psi, s$n,  
-                s$x, s$npatt, s$r, s$mdpst, s$nmdp, s$sj, s$last,  
+    s$x <- is2n(s$d, theta, s$p, s$psi, s$n,
+                s$x, s$npatt, s$r, s$mdpst, s$nmdp, s$sj, s$last,
                 integer(s$p), integer(s$p), double(s$p), theta, rnorm(n=1))
     # P-step: update parameters given completed data
-    theta <- ps2n(s$p, s$psi, s$n, s$x, s$npatt,  
-                  s$r, s$mdpst, s$nmdp, integer(s$p), integer(s$p),  
-                  s$nmon, s$sj, s$nlayer, s$d, tobs, numeric(s$d),  
+    theta <- ps2n(s$p, s$psi, s$n, s$x, s$npatt,
+                  s$r, s$mdpst, s$nmdp, integer(s$p), integer(s$p),
+                  s$nmon, s$sj, s$nlayer, s$d, tobs, numeric(s$d),
                   numeric(s$d), numeric(s$p + 1), numeric(s$d))
+    it <- it + 1
+    if (showits)
+      cat(paste(format(it), "...", sep = ""))
+    converged <- max(abs(old - theta)) <= criterion
   }
-  if (showits)  
+  if (showits)
     cat("\n")
   theta
+  # for (i in 1:steps) {
+  #   if (showits)
+  #     cat(paste(format(i), "...", sep = ""))
+  #   # I-step: impute missing data given current parameters
+  #   s$x <- is2n(s$d, theta, s$p, s$psi, s$n,
+  #               s$x, s$npatt, s$r, s$mdpst, s$nmdp, s$sj, s$last,
+  #               integer(s$p), integer(s$p), double(s$p), theta, rnorm(n=1))
+  #   # P-step: update parameters given completed data
+  #   theta <- ps2n(s$p, s$psi, s$n, s$x, s$npatt,
+  #                 s$r, s$mdpst, s$nmdp, integer(s$p), integer(s$p),
+  #                 s$nmon, s$sj, s$nlayer, s$d, tobs, numeric(s$d),
+  #                 numeric(s$d), numeric(s$p + 1), numeric(s$d))
+  # }
+  # if (showits)
+  #   cat("\n")
+  # theta
 }
 
 # s$x <- .na.to.snglcode(s$x, as.double(999))

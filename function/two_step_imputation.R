@@ -68,12 +68,12 @@ step1 <- function(data, nimpute, emmaxits, maxits, seed) {
   s <- prelim.norm.new(data)     # Prepare data for norm package
   thetahat <- em.norm(s, maxits = emmaxits)   # Get initial parameters using EM algorithm
   rngseed(seed)                  # Set random seed
-  theta <- mda_r(s, thetahat, steps = maxits, showits = TRUE)   # Run MCMC to update parameters
   
   all_mono_new <- data.frame(data)
   all_mono_new[,"impno"] <- 0   # Add imputation indicator for original data
   
   for (i in 1:nimpute) {
+    theta <- mda_r(s, thetahat, steps = maxits, showits = TRUE)   # Run MCMC to update parameters
     all_mono_one_time <- data.frame(imp.norm(s, theta, data))   # Impute missing values
     # Ensure monotone structure by setting post-missing values to NA for each row
     for (j in 1:nrow(data)) {
