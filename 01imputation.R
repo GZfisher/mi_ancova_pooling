@@ -87,4 +87,4 @@ complete_long <- convert_long(imputed_data = complete100, original_data = ori_da
                          visit_prefix = "WEEK", subj_col = "SUBJID", base_col = "BASE", target_var = "CHG")
 
 # Save final imputed/long data for further use (commented out here)
-# save(complete_long, complete100, mono100_added, file = "imputation.RData")
+save(complete_long, complete100, mono100_added, file = "imputation.RData")

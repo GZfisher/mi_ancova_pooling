@@ -74,14 +74,7 @@ step1 <- function(data, nimpute, emmaxits, maxits, seed) {
   
   for (i in 1:nimpute) {
     theta <- mda.norm(s, thetahat, steps = maxits, showits = TRUE)   # Run MCMC to update parameters
-    all_mono_one_time <- data.frame(imp.norm(s, theta, data))   # Impute missing values
-    # Ensure monotone structure by setting post-missing values to NA for each row
-    for (j in 1:nrow(data)) {
-      last_num <- max(which(!is.na(data[j,])))
-      if (last_num < ncol(data)) {
-        all_mono_one_time[j, (last_num+1):ncol(data)] <- "is.na<-"(all_mono_one_time[j, (last_num+1):ncol(data)])
-      }
-    }
+    all_mono_one_time <- data.frame(mimp.norm(s, theta, data))   # Impute missing values
     all_mono_one_time$impno <- i   # Add imputation number
     all_mono_new <- rbind(all_mono_new, all_mono_one_time)  # Append result
     print(paste0("MCMC imputation: ", i, "..."))

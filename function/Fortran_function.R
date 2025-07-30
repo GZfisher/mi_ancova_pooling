@@ -22,6 +22,19 @@ mda.norm <- function (s, theta, steps = 1, showits = FALSE)
   theta
 }
 
+# Generates a single imputed dataset under theta
+mimp.norm <- function(s,theta,x){
+  s$x <- .na.to.snglcode(s$x,999)
+  s$x <- .Fortran("is2n", s$d, theta, s$p, s$psi, s$n, 
+                  s$x, s$npatt, s$r, s$mdpst, s$nmdp, s$sj, s$last, 
+                  integer(s$p), integer(s$p), double(s$p), theta, PACKAGE = "norm")[[6]]
+  s$x <- .code.to.na(s$x,999)
+  s$x <- s$x*matrix(s$sdv,s$n,s$p,TRUE)+matrix(s$xbar,s$n,s$p,TRUE)
+  s$x <- s$x[s$ro,]
+  if(!missing(x))x[is.na(x)] <- s$x[is.na(x)]
+  else{x <- s$x; storage.mode(x) <- "double"}
+  x}
+
 # Finds the column numbers of the observed variables, 
 # and stores them in the first noc elements of oc. Does not go beyond column=last.
 gtoc <- function(p, npatt, r, patt, oc, last) {

@@ -1,5 +1,5 @@
 # rm(list = ls())
-# load("imputation.RData")
+load("imputation.RData")
 
 library(dplyr)
 # Set reference levels for treatment variables as required for analysis
@@ -53,5 +53,5 @@ for (vv in seq(2,56,2)) {
   }
   print(vv)
 }
-# diff_r <- res_com100
-# save(diff_r, file = "diff_r.RData")
+diff_r <- res_com100
+save(diff_r, file = "diff_r.RData")
